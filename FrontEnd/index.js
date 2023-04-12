@@ -1,12 +1,10 @@
 const reponse = await fetch("http://localhost:5678/api/works", {
-    method: 'GET',
+    method: "GET",
     headers: {
-        'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4MDE3OTI5MywiZXhwIjoxNjgwMjY1NjkzfQ.lJKOqeglPNzKxSQGO7mM-nXRKVkZOCKS8CIyr-duoVE',
-
-    }
-
+        authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4MDE3OTI5MywiZXhwIjoxNjgwMjY1NjkzfQ.lJKOqeglPNzKxSQGO7mM-nXRKVkZOCKS8CIyr-duoVE",
+    },
 });
-
 
 const works = await reponse.json();
 
@@ -41,19 +39,11 @@ function genererworks(works) {
     }
 }
 
-// Fonction qui va selectionner la gallery et supprime l'enfant element de la gallery
-
-function supprimerElement(index) {
-    const sectionGallery = document.querySelector(".gallery");
-    sectionGallery.removeChild(sectionGallery.childNodes[index]); // la méthode c'est removeChild qui se base sur l'index (en parametre [index]) des éléments générer (works) avec la propriété "childNodes" qui représente
-    // les "noeuds" qui sont juste les éléments du DOM , noeuds = éléments dom , ici noeuds = works
-}
-
 // Fonction avec une boucle for pour la modal , fonctionne comme celle du haut "genereworks"
-
+export let article;
 function genererworksmodal(works) {
     for (let i = 0; i < works.length; i++) {
-        const article = works[i];
+        article = works[i];
 
         const figureElement = document.createElement("figure");
 
@@ -69,29 +59,36 @@ function genererworksmodal(works) {
             '<i class="fa-solid fa-arrows-up-down-left-right mouve"></i>';
 
         figureElement.appendChild(mouveArrow);
-
+        const tokenDeleteElement = sessionStorage.getItem("token");
         const trashIcon = document.createElement("a");
         trashIcon.href = "#";
         trashIcon.innerHTML =
             '<i class="fa-sharp fa-regular fa-trash-can trash"></i>';
+        trashIcon.setAttribute("data-id", article.id);
+        trashIcon.setAttribute("data-index", i); // Ajouter l'indice de l'élément à supprimer
+        // Ajout d'une constante "iconTrash" afin que le clique se fasse sur la balise <i> pour évité les "problèmes de clique" due a l'élémment trashIcon (<a>) qui contient la balise (<i>) 
+        const iconTrash = trashIcon.querySelector(".trash");
+        // Ajout d'un événement clic pour l'icon trash, pour qu'au clic l'élément en question soit supprimé
+        iconTrash.addEventListener("click", (event) => {
+            event.preventDefault();
+            const idElement = trashIcon.getAttribute("data-id");
+            const index = event.target.getAttribute("data-index"); // Obtenir l'indice de l'élément à supprimer
 
-        // Ajout d'un évemenent clic pour l'icon trash , pour qu'au click l'élémment en question soit supprimé
-        trashIcon.addEventListener("click", () => {
-            fetch(`http://localhost:5678/api/works/${article.id}`, {
+            fetch(`http://localhost:5678/api/works/${idElement}`, {
                 method: "DELETE",
                 headers: {
-                    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4MDU5MTgxMywiZXhwIjoxNjgwNjc4MjEzfQ.ZkF2SszKnE0cA3-G-mMbsJPliqzEFk3BTYy9ZgDoUUc",
-                }
+                    Authorization: `Bearer ${tokenDeleteElement}`,
+                },
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log("Success:", data);
-                    const index = works.findIndex((work) => work.id === article.id); // Trouver l'index de l'article à supprimer
-                    works.splice(index, 1);
-                    figureElement.remove();
-                    supprimerElement(index);
+                .then((response) => {
+                    if (response.ok) {
+                        // Supprimer l'élément de la galerie
+                        supprimerElement(index);
+                    }
                 })
-                .catch((error) => console.error("Error:", error));
+                .catch((error) => {
+                    console.log(error);
+                });
         });
 
         figureElement.appendChild(trashIcon);
@@ -111,6 +108,19 @@ function genererworksmodal(works) {
 genererworks(works);
 genererworksmodal(works);
 
+// Fonction qui va sélectionner la gallery et supprime l'enfant element de la gallery
+function supprimerElement(index) {
+    const sectionGallery = document.querySelector(".gallery");
+    const childNodes = sectionGallery.childNodes;
+
+    if (
+        index >= 0 &&
+        index < childNodes.length &&
+        childNodes[index] instanceof Node
+    ) {
+        sectionGallery.removeChild(childNodes[index]);
+    }
+}
 // Filterbar : relier les les éléments enfants à la filterbar
 
 const filterBar = document.querySelector(".filterbar");

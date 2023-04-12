@@ -25,9 +25,11 @@ loginForm.addEventListener("submit", (event) => {
         .then((data) => {
             //  stock le token dans le session storage pour le réutiliser plus tard.
             sessionStorage.setItem("token", data.token);
+            //localStorage.setItem('token', data.token);
             window.location.replace("../index.html"); //  redirige vers la page principale
             document.querySelector(".filterbar").style.display = "block";
         })
 
         .catch((error) => console.error(error));
+
 });
