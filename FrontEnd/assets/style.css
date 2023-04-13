@@ -399,6 +399,7 @@ footer nav ul {
 }
 
 .modal-wrapper h3 {
+  padding: 60px 5px 46px 0;
   padding-top: 60px;
   padding-bottom: 46px;
   font-family: "Work Sans";

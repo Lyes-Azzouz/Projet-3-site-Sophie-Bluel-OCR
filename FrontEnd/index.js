@@ -74,21 +74,29 @@ function genererworksmodal(works) {
             const idElement = trashIcon.getAttribute("data-id");
             const index = event.target.getAttribute("data-index"); // Obtenir l'indice de l'élément à supprimer
 
-            fetch(`http://localhost:5678/api/works/${idElement}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${tokenDeleteElement}`,
-                },
-            })
-                .then((response) => {
-                    if (response.ok) {
-                        // Supprimer l'élément de la galerie
-                        supprimerElement(index);
-                    }
+
+
+            // Afficher une boîte de dialogue de confirmation
+            const confirmation = confirm("Voulez-vous vraiment supprimer ce projet ?");
+            if (confirmation) {
+
+                fetch(`http://localhost:5678/api/works/${idElement}`, {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${tokenDeleteElement}`,
+                    },
                 })
-                .catch((error) => {
-                    console.log(error);
-                });
+                    .then((response) => {
+                        if (response.ok) {
+                            // Supprimer l'élément de la galerie
+                            supprimerElement(index);
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
+
         });
 
         figureElement.appendChild(trashIcon);
