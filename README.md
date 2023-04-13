@@ -8,7 +8,7 @@ N'oubliez pas d'installer les dépendances si besoin , le compte administrateur 
 email : sophie.bluel@test.tld
 mdp : S0phie
 
-Les fonctionnalité principales du site permettent à l'utilisateur de gérer des projets sur le site , pour cela il dispose d'une barre de filtre qui lui permet de filtrer ses projets en fonction
+Les fonctionnalités principales du site permettent à l'utilisateur de gérer des projets sur le site , pour cela il dispose d'une barre de filtre qui lui permet de filtrer ses projets en fonction
 de leurs catégorie (objets , appartement ou hôtel) , il peut se connecter en appuyant sur Login ; cela le redigirigera vers une page de connexion.
 
 Une fois connecté , il peut modifier a sa guise les projets postés , il dispose pour cela d'une fênetre modal qui lui permet de gérer la gestion de ses projets , en y ajoutant d'autre 
