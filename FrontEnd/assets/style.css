@@ -446,7 +446,7 @@ footer nav ul {
   display: flex;
   flex-direction: column;
   position: relative;
-  top: 380px;
+  top: 345px;
 }
 
 #btn-modal1 {
@@ -600,4 +600,19 @@ footer nav ul {
 
 #image-form {
   display: none;
+}
+.trait {
+  position: relative;
+  border: 1px solid #b3b3b3;
+  width: 420px;
+  top: 310px;
+  left: 105px;
+}
+
+.trait-modal-2 {
+  position: relative;
+  border: 1px solid #b3b3b3;
+  width: 420px;
+  top: 165px;
+  left: 105px;
 }
