@@ -91,6 +91,7 @@ video {
   font: inherit;
   vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 article,
 aside,
@@ -127,6 +128,7 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
 /** end reset css**/
 body {
   max-width: 1140px;
@@ -142,7 +144,6 @@ header {
 section {
   margin: 50px 0;
 }
-
 h1 {
   display: flex;
   flex-direction: column;
@@ -151,25 +152,21 @@ h1 {
   font-weight: 800;
   color: #b1663c;
 }
-
 h1 > span {
   font-family: "Work Sans";
   font-size: 10px;
   letter-spacing: 0.1em;
 }
-
 h2 {
   font-family: "Syne";
   font-weight: 700;
   font-size: 30px;
   color: #1d6154;
 }
-
 .titre-top {
   padding-bottom: 50px;
   padding-top: 40px;
 }
-
 nav ul {
   display: flex;
   align-items: center;
@@ -179,7 +176,6 @@ nav li {
   padding: 0 10px;
   font-size: 1.2em;
 }
-
 li:hover {
   color: #b1663c;
 }
@@ -195,14 +191,12 @@ li:hover {
   margin: auto;
   width: 80%;
 }
-
 #introduction article {
   flex: 1;
 }
 #introduction h2 {
   margin-bottom: 1em;
 }
-
 #introduction p {
   margin-bottom: 0.5em;
 }
@@ -217,7 +211,6 @@ li:hover {
   grid-column-gap: 20px;
   grid-row-gap: 20px;
 }
-
 .gallery img {
   width: 100%;
 }
@@ -237,7 +230,6 @@ li:hover {
   display: flex;
   flex-direction: column;
 }
-
 #contact input {
   height: 50px;
   font-size: 1.2em;
@@ -251,7 +243,6 @@ li:hover {
   border: none;
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
-
 input[type="submit"] {
   font-family: "Syne";
   font-weight: 700;
@@ -262,13 +253,13 @@ input[type="submit"] {
   text-align: center;
   border-radius: 60px;
 }
-
 footer nav ul {
   display: flex;
   justify-content: flex-end;
   margin: 2em;
 }
-/** Création de la topBar et de ses sous éléments**/
+
+/** Stylisation de la topBar et de ses sous éléments**/
 .topbar-style {
   position: absolute;
   top: 0px;
@@ -280,7 +271,6 @@ footer nav ul {
   align-items: center;
   justify-content: center;
 }
-
 .bouton-edition {
   font-family: "Work Sans";
   display: flex;
@@ -294,12 +284,10 @@ footer nav ul {
   top: 8px;
   cursor: pointer;
 }
-
 .boutonEI {
   padding-right: 10px;
   cursor: pointer;
 }
-
 .bouton-changement {
   background: #ffffff;
   border-radius: 60px;
@@ -310,14 +298,13 @@ footer nav ul {
   margin-left: 10px;
   cursor: pointer;
 }
-/** Création du style d'éléments enfants aux header **/
 
+/** Stylisation du style d'éléments enfants aux header **/
 .filterbar {
   margin: 110px 0 51px 250px;
   min-width: 700px;
   position: relative;
 }
-
 .filterbar button {
   margin-left: 10px;
   padding: 9px 28px;
@@ -332,12 +319,10 @@ footer nav ul {
   border-radius: 60px;
   color: #1d6154;
 }
-
 .filterbar button:active {
   color: #fff;
   background: #1d6154;
 }
-
 #btn-modifier {
   position: relative;
   left: 700px;
@@ -348,12 +333,10 @@ footer nav ul {
   font-style: normal;
   font-weight: 400;
 }
-
 #btn-modifier i {
   padding-right: 11.13px;
   font-size: 1rem;
 }
-
 #btn-modifier-2 {
   position: relative;
   bottom: 195px;
@@ -365,15 +348,14 @@ footer nav ul {
   color: #000000;
   text-decoration: none;
 }
-
 #btn-modifier-2 i {
   padding-right: 8px;
 }
-
 .button-modifier-hide {
   display: none;
 }
 
+/*** Stylisation de la modal ***/
 .modal {
   position: fixed;
   top: 0;
@@ -385,7 +367,6 @@ footer nav ul {
   align-items: center;
   justify-content: center;
 }
-
 .modal-wrapper {
   background: #ffffff;
   border-radius: 10px;
@@ -397,7 +378,6 @@ footer nav ul {
   display: flex;
   flex-direction: column;
 }
-
 .modal-wrapper h3 {
   padding: 60px 5px 46px 0;
   padding-top: 60px;
@@ -409,7 +389,6 @@ footer nav ul {
   line-height: 30px;
   text-align: center;
 }
-
 #gallery-modal {
   position: relative;
   height: 104px;
@@ -423,12 +402,10 @@ footer nav ul {
   grid-column-gap: 0px;
   grid-row-gap: 15px;
 }
-
 #gallery-modal img {
   height: 105px;
   width: 79px;
 }
-
 #gallery-modal a {
   background-color: #000;
   color: #fff;
@@ -441,14 +418,12 @@ footer nav ul {
   top: 25px;
   left: 35px;
 }
-
 .modif {
   display: flex;
   flex-direction: column;
   position: relative;
   top: 345px;
 }
-
 #btn-modal1 {
   position: relative;
   width: 237px;
@@ -461,7 +436,6 @@ footer nav ul {
   font-size: 14px;
   border: 0;
 }
-
 #btn-modal2 {
   border: 0;
   position: relative;
@@ -472,7 +446,6 @@ footer nav ul {
   font-weight: 400;
   font-style: normal;
 }
-
 #fermer {
   border: 0;
   background: none;
@@ -485,13 +458,11 @@ footer nav ul {
   color: black;
 }
 
-/*** Eléments class pour modal.js concernant la partie "ajout de photo" de la modal ***/
-
+/*** Eléments pour modal.js concernant la partie "ajout de photo" de la modal ***/
 .title-modal-loadpicture {
   position: relative;
   left: 10px;
 }
-
 .imgI-style {
   position: relative;
   left: 282px;
@@ -499,7 +470,6 @@ footer nav ul {
   font-size: 4rem;
   color: #b9c5cc;
 }
-
 .div-modal-style {
   display: flex;
   flex-direction: column;
@@ -507,7 +477,6 @@ footer nav ul {
   height: 500px;
   position: relative;
 }
-
 .style-bouton-ajout {
   background-color: #cbd6dc;
   height: 36px;
@@ -524,11 +493,9 @@ footer nav ul {
   position: relative;
   left: 228px;
 }
-
 #bouton-ajout {
   display: none;
 }
-
 #sous-titre-btnmodal {
   position: relative;
   bottom: 14px;
@@ -537,13 +504,11 @@ footer nav ul {
   font-family: "Work Sans";
   color: #444444;
 }
-
 .fleche-modal-style {
   position: relative;
   right: 350px;
   bottom: 40px;
 }
-
 #input-titre-style,
 #select-categorie-style {
   height: 51px;
@@ -553,16 +518,13 @@ footer nav ul {
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
   border: 1px solid black;
 }
-
 #input-titre-style {
   top: 65px;
 }
-
 #select-categorie-style {
   top: 115px;
   left: 100px;
 }
-
 #label-titre-style,
 #label-categorie-style {
   font-family: "Work Sans";
@@ -571,17 +533,14 @@ footer nav ul {
   font-size: 14px;
   position: relative;
 }
-
 #label-titre-style {
   top: 20px;
   right: 424px;
 }
-
 #label-categorie-style {
   top: 125px;
   right: 460px;
 }
-
 #btn-valider-style {
   background: #a7a7a7;
   border-radius: 60px;
@@ -597,7 +556,6 @@ footer nav ul {
   font-weight: 700;
   color: #ffffff;
 }
-
 #image-form {
   display: none;
 }
@@ -608,7 +566,6 @@ footer nav ul {
   top: 310px;
   left: 105px;
 }
-
 .trait-modal-2 {
   position: relative;
   border: 1px solid #b3b3b3;

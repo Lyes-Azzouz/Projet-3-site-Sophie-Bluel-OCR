@@ -1,13 +1,9 @@
-// Récupère l'élément qui a pour id "login-form"
+// Mise en place de la logique de connexion de l'utilisateur via une requête fetch
 const loginForm = document.getElementById("login-form");
-
-// Ajout d'un écouteur d'évenement submit
 loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
-
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
-
     // Création de l'objet data
     const formData = {
         email: emailInput.value,
@@ -29,7 +25,5 @@ loginForm.addEventListener("submit", (event) => {
             window.location.replace("../index.html"); //  redirige vers la page principale
             document.querySelector(".filterbar").style.display = "block";
         })
-
         .catch((error) => console.error(error));
-
 });
