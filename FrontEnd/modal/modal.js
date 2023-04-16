@@ -1,12 +1,10 @@
-////////////////////// Création de la modal //////////////////////
+// Déclaration de la variable modale
 let modal = null;
 
 // Fonction pour ouvrir la modale
 const openModal = function (e) {
   e.preventDefault();
-
   const target = document.querySelector(e.target.getAttribute("href"));
-
   target.style.display = null;
   target.removeAttribute("aria-hidden");
   target.setAttribute("aria-modal", "true");
@@ -20,9 +18,9 @@ const openModal = function (e) {
 
 // Fonction pour fermer la modale
 const closeModal = function (e) {
+  // Vérification de l'affichage de la modale
   if (modal === null) return;
   e.preventDefault();
-
   modal.style.display = "none";
   modal.setAttribute("aria-hidden", "true");
   modal.removeAttribute("aria-modal");
@@ -36,6 +34,7 @@ const closeModal = function (e) {
     .removeEventListener("click", stopPropagation);
 };
 
+// Fonction pour empêcher la propagation du clic sur la modale
 const stopPropagation = function (e) {
   e.stopPropagation();
 };
@@ -48,7 +47,7 @@ const tokenDeleteGallery = sessionStorage.getItem("token");
 
 deleteGallery.addEventListener("click", function (e) {
   e.preventDefault();
-  // Récupère tous les ID des éléments de la galerie
+  // Récupère tous les projets(works) présents sur l'API
   fetch("http://localhost:5678/api/works")
     .then((response) => response.json())
     .then((data) => {
@@ -100,21 +99,20 @@ const modif = modal1.querySelector(".modif");
 const btnModal1 = modal1.querySelector("#btn-modal1");
 const btnModal2 = modal1.querySelector("#btn-modal2");
 
-// Création de la variable séléction pour sélectionner une catégorie
+// Création des variables "selection" et "categorieId" pour le forumlaire d'envois de fichiers
 let selection;
 let categorieId;
-// Ajout de l'écouteur d'événement click sur le bouton "Ajouter une photo" , pour que l'utilisateur puisse ajouter une photo depuis son pc
+
+// Mise en place de la foncionnalité "Ajouter une photo" , pour que l'utilisateur puisse ajouter une photo depuis son pc
 btnModal1.addEventListener("click", function () {
-  // Modification du titre de la modal
   title.textContent = "Ajout photo";
   title.classList.add("title-modal-loadpicture");
-
-  // Masquage de la galerie
   gallery.style.display = "none";
   btnModal1.style.display = "none";
   btnModal2.style.display = "none";
   const divForm = document.getElementById("divModalForm");
   divForm.style.display = "block";
+
   // Attribution des numéro d'id pour chaque catégorie dans la select
   const categories = {
     appart: 2,
@@ -122,10 +120,8 @@ btnModal1.addEventListener("click", function () {
     hotelresto: 3,
   };
 
-  // Récupération de l'élément en question afin de lui attribué la fonction
-  // qui permettra de changer l'option en chiffre
+  // Paramètrage de la selection des catégories
   selection = document.getElementById("select-categorie-style");
-
   selection.addEventListener("change", function () {
     const selectionIndex = selection.selectedIndex;
     const selectionOption = selection.options[selectionIndex];
@@ -134,15 +130,13 @@ btnModal1.addEventListener("click", function () {
     console.log(categorieId);
   });
 
-  // Ajout de la flèche retour avec la balise <i> de fontawesome
+  // Paramètrage de la flèche retour avec la balise <i> de fontawesome
   const flecheRetour = document.createElement("i");
   flecheRetour.classList.add("fa-sharp", "fa-solid", "fa-arrow-left");
   flecheRetour.classList.add("fleche-modal-style");
   flecheRetour.style.cursor = "pointer";
   title.appendChild(flecheRetour);
-  // Ajout de l'écouteur d'événement click sur la flèche retour
   flecheRetour.addEventListener("click", function () {
-    // Affichage de la galerie
     gallery.style.display = "";
     btnModal1.style.display = "";
     btnModal2.style.display = "";
@@ -151,7 +145,7 @@ btnModal1.addEventListener("click", function () {
   });
 });
 
-//Création de la fonctionnalité qui permet de charger une photo dans la modal
+/////////////////////////Création de la logique qui permet de charger une photo dans la modal//////////////////////////
 
 //Récupération des élements
 const boutonAjoutInput = document.getElementById("bouton-ajout");
@@ -213,8 +207,6 @@ document.getElementById("divModalForm").addEventListener("submit", (e) => {
     formData.append("image", image);
     formData.append("title", titre);
     formData.append("category", categorieId);
-
-    // Envoi des données à l'API via une requête POST
     console.log("ceci est un test", formData);
 
     const setNewProject = async (data) => {

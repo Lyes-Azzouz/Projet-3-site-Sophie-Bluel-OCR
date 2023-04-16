@@ -1,15 +1,19 @@
-// Mise en place de la logique de connexion de l'utilisateur via une requête fetch
+// Récupère l'élément qui a pour id "login-form"
 const loginForm = document.getElementById("login-form");
+
+// Ajout d'un écouteur d'évenement submit
 loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
+
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
+
     // Création de l'objet data
     const formData = {
         email: emailInput.value,
         password: passwordInput.value,
     };
-    // Va chercher login à l'adresse suivante
+    // Récupération de l'users pour se connecter présents sur l'API
     fetch("http://localhost:5678/api/users/login", {
         method: "POST",
         headers: {
@@ -19,10 +23,8 @@ loginForm.addEventListener("submit", (event) => {
     })
         .then((response) => response.json())
         .then((data) => {
-            //  stock le token dans le session storage pour le réutiliser plus tard.
             sessionStorage.setItem("token", data.token);
-            //localStorage.setItem('token', data.token);
-            window.location.replace("../index.html"); //  redirige vers la page principale
+            window.location.replace("../index.html");
             document.querySelector(".filterbar").style.display = "block";
         })
         .catch((error) => console.error(error));

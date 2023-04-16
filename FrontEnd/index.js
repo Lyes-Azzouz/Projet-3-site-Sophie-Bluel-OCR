@@ -1,4 +1,4 @@
-// Récupération des projets présents sur l'api
+// Récupération des projets (works) présents sur l'API
 const reponse = await fetch("http://localhost:5678/api/works", {
     method: "GET",
     headers: {
@@ -8,7 +8,7 @@ const reponse = await fetch("http://localhost:5678/api/works", {
 });
 const works = await reponse.json();
 
-// Fonction avec une boucle pour générer les articles du site avec les données du JSON
+// Fonction avec une boucle pour générer les articles du site présent sur l'API
 function genererworks(works) {
     for (let i = 0; i < works.length; i++) {
         const article = works[i];
@@ -24,7 +24,7 @@ function genererworks(works) {
     }
 }
 
-// Fonction avec une boucle pour la modal , fonctionne comme celle du haut "genereworks" + requête DELETE
+// Fonction avec une boucle  pour la modal , fonctionne comme celle du haut "genereworks"
 export let article;
 function genererworksmodal(works) {
     for (let i = 0; i < works.length; i++) {
@@ -39,22 +39,23 @@ function genererworksmodal(works) {
         mouveArrow.innerHTML =
             '<i class="fa-solid fa-arrows-up-down-left-right mouve"></i>';
         figureElement.appendChild(mouveArrow);
-
-        //Mise en place de l'îcone trashIcon ainsi que de la requête DELETE
         const tokenDeleteElement = sessionStorage.getItem("token");
         const trashIcon = document.createElement("a");
         trashIcon.href = "#";
         trashIcon.innerHTML =
             '<i class="fa-sharp fa-regular fa-trash-can trash"></i>';
         trashIcon.setAttribute("data-id", article.id);
-        trashIcon.setAttribute("data-index", i); // Ajouter l'indice de l'élément à supprimer
-        // Ajout d'une constante "iconTrash" afin que le clique se fasse sur la balise <i> pour évité les "problèmes de clique" due a l'élémment trashIcon (<a>) qui contient la balise (<i>)
+        trashIcon.setAttribute("data-index", i);
+
+        // Ajout d'une constante "iconTrash" afin que le clique se fasse sur la balise <i> pour éviter les "problèmes de clique" due a l'élémment trashIcon (<a>) qui contient la balise (<i>)
         const iconTrash = trashIcon.querySelector(".trash");
-        // Ajout d'un événement clic pour l'icon trash, pour qu'au clic l'élément en question soit supprimé
         iconTrash.addEventListener("click", (event) => {
             event.preventDefault();
             const idElement = trashIcon.getAttribute("data-id");
+
+            // Obtenir l'indice de l'élément à supprimer
             const index = event.target.getAttribute("data-index");
+
             // Afficher une boîte de dialogue de confirmation
             const confirmation = confirm(
                 "Voulez-vous vraiment supprimer ce projet ?"
@@ -68,7 +69,6 @@ function genererworksmodal(works) {
                 })
                     .then((response) => {
                         if (response.ok) {
-                            // Supprimer l'élément de la galerie
                             supprimerElement(index);
                         }
                     })
@@ -77,6 +77,7 @@ function genererworksmodal(works) {
                     });
             }
         });
+
         figureElement.appendChild(trashIcon);
         const sectionGallery = document.querySelector("#gallery-modal");
         sectionGallery.appendChild(figureElement);
@@ -84,10 +85,11 @@ function genererworksmodal(works) {
         figureElement.appendChild(nomElement);
     }
 }
+
 genererworks(works);
 genererworksmodal(works);
 
-// Fonction qui va sélectionner la gallery et supprime l'enfant element de la gallery
+// Fonction pour supprimer les projets présents dans la gallery
 function supprimerElement(index) {
     const sectionGallery = document.querySelector(".gallery");
     const childNodes = sectionGallery.childNodes;
@@ -101,7 +103,7 @@ function supprimerElement(index) {
     }
 }
 
-// Filterbar : relier les les éléments enfants à la filterbar
+// Mise en place de la filterbar
 const filterBar = document.querySelector(".filterbar");
 const boutonTous = document.querySelector(".tous");
 const boutonObjets = document.querySelector(".objets");
@@ -112,7 +114,6 @@ filterBar.appendChild(boutonObjets);
 filterBar.appendChild(boutonAppart);
 filterBar.appendChild(boutonHotel);
 
-// Ajout d'évènement au click de chaque bouton de la filterbar
 boutonTous.addEventListener("click", function () {
     const worksTous = works.filter(function (work) {
         return work.categoryId;
@@ -155,8 +156,6 @@ if (!userIsCo) {
 } else if (userIsCo) {
     filterbar.style.display = "none";
 }
-
-// Modifier le bouton login en logout en fonction de la connexion de l'utilisateur
 const loginBtn = document.querySelector(".logOut");
 if (userIsCo) {
     loginBtn.innerText = "logout";
@@ -169,7 +168,6 @@ if (userIsCo) {
     loginBtn.innerText = "login";
     loginBtn.style.textDecoration = "none";
 }
-// Modifier le bouton "modifier" en fonction de la connexion
 const titrePage = document.getElementById("titre-page-top");
 const modifierBtn = document.getElementById("btn-modifier");
 const modifierBtn2 = document.getElementById("btn-modifier-2");
@@ -185,11 +183,10 @@ if (userIsCo) {
 const logoutLink = document.querySelector("#loginOut");
 logoutLink.addEventListener("click", function () {
     sessionStorage.removeItem("token");
-    // Redirige l'utilisateur vers la page index.html
     window.location.href = "../index.html";
 });
 
-// Création de la topBar située en haut de la page
+// Mise en place de la topBar située en haut de la page si l'user est connecté
 if (userIsCo) {
     const headerPage = document.querySelector("header");
     const topBar = document.createElement("div");
