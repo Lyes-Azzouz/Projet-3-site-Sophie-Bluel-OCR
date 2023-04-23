@@ -3,10 +3,6 @@ Copie de l'ancien repository du Projet 3
 
 Language utilisé : HTML , CSS , JAVASCRIPT(vanilla)
 
-N'oubliez pas d'installer les dépendances si besoin , le compte administrateur pour tester le site est le suivant : 
-
-email : sophie.bluel@test.tld
-mdp : S0phie
 
 Les fonctionnalités principales du site permettent à l'utilisateur de gérer des projets sur le site , pour cela il dispose d'une barre de filtre qui lui permet de filtrer ses projets en fonction
 de leurs catégorie (objets , appartement ou hôtel) , il peut se connecter en appuyant sur Login ; cela le redigirigera vers une page de connexion.
