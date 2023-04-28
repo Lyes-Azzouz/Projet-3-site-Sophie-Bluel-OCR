@@ -45,45 +45,52 @@ console.log(`"test article modal.js" + ${article}`);
 const deleteGallery = document.querySelector("#btn-modal2");
 const tokenDeleteGallery = sessionStorage.getItem("token");
 
-deleteGallery.addEventListener("click", function (e) {
+deleteGallery.addEventListener("click", async function (e) {
   e.preventDefault();
-  // Récupère tous les projets(works) présents sur l'API
-  fetch("http://localhost:5678/api/works")
-    .then((response) => response.json())
-    .then((data) => {
-      const ids = data.map((item) => item.id);
-      console.log(ids);
-      // Supprime tous les éléments de la galerie en utilisant les IDs récupérés
-      data
-        .forEach((item) => {
-          fetch(`http://localhost:5678/api/works/${item.id}`, {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${tokenDeleteGallery}`,
-            },
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(
-                  "Erreur lors de la suppression des éléments de la galerie"
-                );
-              }
-              // Supprime les éléments de la galerie de la page HTML
-              const sectionGalleryPage = document.querySelector(".gallery");
-              sectionGalleryPage.innerHTML = "";
-              console.log(
-                "Tous les éléments de la galerie ont été supprimés avec succès"
-              );
+  // Afficher une boîte de dialogue de confirmation
+  const confirmation = confirm(
+    "Voulez-vous vraiment supprimer la gallery ?"
+  );
+
+  if (confirmation) {
+    // Récupère tous les projets(works) présents sur l'API
+    fetch("http://localhost:5678/api/works")
+      .then((response) => response.json())
+      .then((data) => {
+        const ids = data.map((item) => item.id);
+        console.log(ids);
+        // Supprime tous les éléments de la galerie en utilisant les IDs récupérés
+        data
+          .forEach((item) => {
+            fetch(`http://localhost:5678/api/works/${item.id}`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${tokenDeleteGallery}`,
+              },
             })
-            .catch((error) => {
-              console.error(error);
-            });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    });
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(
+                    "Erreur lors de la suppression des éléments de la galerie"
+                  );
+                }
+                // Supprime les éléments de la galerie de la page HTML
+                const sectionGalleryPage = document.querySelector(".gallery");
+                sectionGalleryPage.innerHTML = "";
+                console.log(
+                  "Tous les éléments de la galerie ont été supprimés avec succès"
+                );
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      })
+  }
 });
 
 // Ajout de l'écouteur d'événement click pour ouvrir la modale
@@ -153,18 +160,22 @@ const boutonAjoutStyle = document.querySelector(".style-bouton-ajout");
 const imgI = document.querySelector(".imgI-style");
 const imgPreview = document.getElementById("image-form");
 const spanSousTitre = document.getElementById("sous-titre-btnmodal");
-const titreTravaux = document.getElementById("input-titre-style");
-const boutonValider = document.getElementById("btn-valider-style");
-const formulaire = document.getElementById("divModalForm");
+const errorMessageModal = document.querySelector('.msg-error-modal');
+const photo = document.getElementById("bouton-ajout");
+const category = document.getElementById("select-categorie-style");
+const submitBtn = document.getElementById("btn-valider-style");
+const titleWorks = document.getElementById("input-titre-style")
+let fichierImage;
+
 
 // Mise en place de l'évènnement change au bouton Ajout
 boutonAjoutInput.addEventListener("change", (e) => {
   e.preventDefault();
-  const fichierImage = e.target.files[0];
-  if (!fichierImage) {
-    return;
-  }
+  fichierImage = e.target.files[0];
 
+
+
+  console.log(fichierImage);
   const lecteurFichier = new FileReader();
   lecteurFichier.readAsDataURL(fichierImage);
   lecteurFichier.onload = () => {
@@ -179,61 +190,68 @@ boutonAjoutInput.addEventListener("change", (e) => {
     imgI.style.display = "none";
     spanSousTitre.style.color = "white";
     spanSousTitre.style.bottom = "25px";
+    console.log(lecteurFichier);
   };
 });
 
+
 ///////////////////Envoi des fichiers a API///////////////////
 
-document.getElementById("divModalForm").addEventListener("submit", (e) => {
+
+// Fonction qui va valider le formulaire si tout les champs sont remplis 
+function formulaireValide() {
+  if (category.value !== "none" && titleWorks.value !== "" && photo.files.length > 0) {
+    submitBtn.disabled = false;
+    submitBtn.style.backgroundColor = "#1D6154";
+  } else {
+    submitBtn.disabled = true;
+    submitBtn.style.backgroundColor = "";
+  }
+
+
+}
+
+// Ajout d'un évènnement 'change' pour tout les inputs afin de valider l'envois
+photo.addEventListener("change", formulaireValide);
+category.addEventListener("change", formulaireValide);
+titleWorks.addEventListener("change", formulaireValide);
+
+console.log(errorMessageModal);
+// Envoie de la requete à l'API si tout es correct
+document.getElementById("divModalForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-
-  // Récupération des éléments du formulaire
-  const photo = document.getElementById("bouton-ajout");
-  const category = document.getElementById("select-categorie-style");
-  const title = document.getElementById("input-titre-style");
-
-  // Récupération de l'image et du token de l'utilisateur
-  const image = document.getElementById("bouton-ajout").files[0];
-  const testToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4MDk4ODIwNiwiZXhwIjoxNjgxMDc0NjA2fQ.5XmGJzbP8LZ384kb_fR6gwGT-mmQqy671kz8EvQXBsU";
+  const image = photo.files[0];
+  const testToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4MDk4ODIwNiwiZXhwIjoxNjgxMDc0NjA2fQ.5XmGJzbP8LZ384kb_fR6gwGT-mmQqy671kz8EvQXBsU";
   const token = sessionStorage.getItem("token");
   console.log(`Bearer  ${token}`);
-  const titre = document.getElementById("input-titre-style").value;
+  const titre = titleWorks.value;
 
-  // Vérification de la taille de l'image
   if (image.size < 4 * 1048576) {
-    // Création du formulaire pour l'envoi des données
     const formData = new FormData();
     formData.append("image", image);
     formData.append("title", titre);
     formData.append("category", categorieId);
     console.log("ceci est un test", formData);
 
-    const setNewProject = async (data) => {
-      try {
-        const requete = await fetch("http://localhost:5678/api/works", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            accept: "application/json",
-          },
-          body: data,
-        });
-        if (requete.status === 201) {
-          console.log("tout va bien !");
-        } else {
-          throw "Un problème est survenu.";
-        }
-      } catch (e) {
-        console.log(e);
+    try {
+      const requete = await fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          accept: "application/json",
+        },
+        body: formData,
+      });
+      if (requete.status === 201) {
+        console.log("tout va bien !");
+      } else {
+        throw "Un problème est survenu.";
       }
-    };
-    setNewProject(formData);
+    } catch (e) {
+      console.log(e);
+    }
   } else {
-    // Affichage d'un message d'erreur si la taille de l'image est trop grande
-    document.getElementById("msg_err").innerHTML =
-      "La taille de la photo est supérieure à 4 Mo.";
-    // Réinitialisation du champ d'upload de fichier
+    errorMessageModal.innerHTML = "La taille de la photo est supérieure à 4 Mo.";
     photo.value = null;
     document.getElementById("model_ajout_container").style.display = null;
     document.getElementById("image_telecharger_images").style.display = "none";

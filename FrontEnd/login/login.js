@@ -1,19 +1,36 @@
-// Récupère l'élément qui a pour id "login-form"
 const loginForm = document.getElementById("login-form");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const divErrorMsg = document.querySelector(".error-msg")
+console.log(divErrorMsg);
 
-// Ajout d'un écouteur d'évenement submit
 loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
+    // Vérification que les deux champs sont remplis
+    if (emailInput.value === "" || passwordInput.value === "") {
+        if (emailInput.value === "") {
+            divErrorMsg.style.display = "block";
+        }
+        if (passwordInput.value === "") {
+            divErrorMsg.style.display = "block";
+        }
+        return;
+    }
 
-    // Création de l'objet data
+    // Vérification si l'e-mail et le mot de passe sont corrects  
+    if (emailInput.value !== "sophie.bluel@test.tld" || passwordInput.value !== "S0phie") {
+        emailInput.value = "";
+        passwordInput.value = "";
+        divErrorMsg.style.display = "block";
+        return;
+    }
+
+    // Si tout est bon alors envoi de la requête au serveur
     const formData = {
         email: emailInput.value,
         password: passwordInput.value,
     };
-    // Récupération de l'users pour se connecter présents sur l'API
     fetch("http://localhost:5678/api/users/login", {
         method: "POST",
         headers: {

@@ -616,3 +616,13 @@ footer nav ul {
   top: 165px;
   left: 105px;
 }
+
+.msg-error-modal {
+  height: 45px;
+  width: 400px;
+  position: relative;
+  left: 115px;
+  background-color: #000;
+  color: wheat;
+  display: none;
+}

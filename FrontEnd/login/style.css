@@ -121,3 +121,28 @@ button {
   height: 36px;
   color: #fff;
 }
+
+.error-msg {
+  background-color: #332701;
+  color: #eeb337;
+  position: relative;
+  height: 29px;
+  width: 320px;
+  padding-left: 10px;
+  padding-top: 10px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  left: 4px;
+  display: none;
+  border: 1px solid #eeb337;
+}
+
+.error-msg span {
+  font-size: 1rem;
+  color: #eeb337;
+  position: relative;
+  border: 2px solid #eeb337;
+  border-radius: 100px;
+  margin-right: 10px;
+  padding: 1px 7px;
+}
