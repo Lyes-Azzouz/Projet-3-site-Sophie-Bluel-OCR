@@ -87,7 +87,9 @@ function genererworksmodal(works) {
 }
 
 genererworks(works);
-genererworksmodal(works);
+genererworksmodal(works)
+
+
 
 // Fonction pour supprimer les projets présents dans la gallery
 function supprimerElement(index) {

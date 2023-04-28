@@ -243,7 +243,9 @@ document.getElementById("divModalForm").addEventListener("submit", async (e) => 
         body: formData,
       });
       if (requete.status === 201) {
-        console.log("tout va bien !");
+        console.log('test rechargement!!!');
+        document.querySelector(".gallery").innerHTML = "";
+
       } else {
         throw "Un problème est survenu.";
       }
