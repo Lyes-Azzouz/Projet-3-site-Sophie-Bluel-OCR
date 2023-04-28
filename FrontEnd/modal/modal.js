@@ -40,8 +40,7 @@ const stopPropagation = function (e) {
 };
 
 // Suppression de la galerie
-import { article } from "../index.js";
-console.log(`"test article modal.js" + ${article}`);
+import { article, genererworks, genererworksmodal, getWorks } from "../index.js";
 const deleteGallery = document.querySelector("#btn-modal2");
 const tokenDeleteGallery = sessionStorage.getItem("token");
 
@@ -160,7 +159,7 @@ const boutonAjoutStyle = document.querySelector(".style-bouton-ajout");
 const imgI = document.querySelector(".imgI-style");
 const imgPreview = document.getElementById("image-form");
 const spanSousTitre = document.getElementById("sous-titre-btnmodal");
-const errorMessageModal = document.querySelector('.msg-error-modal');
+const divModalForm = document.querySelector('#divModalForm');
 const photo = document.getElementById("bouton-ajout");
 const category = document.getElementById("select-categorie-style");
 const submitBtn = document.getElementById("btn-valider-style");
@@ -216,14 +215,16 @@ photo.addEventListener("change", formulaireValide);
 category.addEventListener("change", formulaireValide);
 titleWorks.addEventListener("change", formulaireValide);
 
-console.log(errorMessageModal);
 // Envoie de la requete à l'API si tout es correct
-document.getElementById("divModalForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+divModalForm.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+  event.stopPropagation();
+
   const image = photo.files[0];
-  const testToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4MDk4ODIwNiwiZXhwIjoxNjgxMDc0NjA2fQ.5XmGJzbP8LZ384kb_fR6gwGT-mmQqy671kz8EvQXBsU";
+
   const token = sessionStorage.getItem("token");
-  console.log(`Bearer  ${token}`);
+
   const titre = titleWorks.value;
 
   if (image.size < 4 * 1048576) {
@@ -232,6 +233,7 @@ document.getElementById("divModalForm").addEventListener("submit", async (e) => 
     formData.append("title", titre);
     formData.append("category", categorieId);
     console.log("ceci est un test", formData);
+
 
     try {
       const requete = await fetch("http://localhost:5678/api/works", {
@@ -242,20 +244,16 @@ document.getElementById("divModalForm").addEventListener("submit", async (e) => 
         },
         body: formData,
       });
-      if (requete.status === 201) {
-        console.log('test rechargement!!!');
-        document.querySelector(".gallery").innerHTML = "";
+      document.querySelector(".gallery").innerHTML = "";
+      document.querySelector("#gallery-modal").innerHTML = "";
+      genererworks(await getWorks());
+      genererworksmodal(await getWorks());
+    } catch (error) {
+      console.trace(error)
+      console.log(error + "un probleme est survenu");
 
-      } else {
-        throw "Un problème est survenu.";
-      }
-    } catch (e) {
-      console.log(e);
     }
-  } else {
-    errorMessageModal.innerHTML = "La taille de la photo est supérieure à 4 Mo.";
-    photo.value = null;
-    document.getElementById("model_ajout_container").style.display = null;
-    document.getElementById("image_telecharger_images").style.display = "none";
+
   }
-});
+}
+);
