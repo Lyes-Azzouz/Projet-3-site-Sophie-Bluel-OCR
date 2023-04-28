@@ -1,15 +1,21 @@
 // Récupération des projets (works) présents sur l'API
-const reponse = await fetch("http://localhost:5678/api/works", {
-    method: "GET",
-    headers: {
-        authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4MDE3OTI5MywiZXhwIjoxNjgwMjY1NjkzfQ.lJKOqeglPNzKxSQGO7mM-nXRKVkZOCKS8CIyr-duoVE",
-    },
-});
-const works = await reponse.json();
+async function getWorks() {
+    const fetchWorks = await fetch("http://localhost:5678/api/works", {
+        method: "GET",
+        headers: {
+            authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4MDE3OTI5MywiZXhwIjoxNjgwMjY1NjkzfQ.lJKOqeglPNzKxSQGO7mM-nXRKVkZOCKS8CIyr-duoVE",
+        }
+    });
+    return fetchWorks.json();
+}
+
+const works = await getWorks();
+
+export { getWorks, genererworks, genererworksmodal };
 
 // Fonction avec une boucle pour générer les articles du site présent sur l'API
-function genererworks(works) {
+async function genererworks(works) {
     for (let i = 0; i < works.length; i++) {
         const article = works[i];
         const figureElement = document.createElement("figure");
@@ -26,7 +32,7 @@ function genererworks(works) {
 
 // Fonction avec une boucle  pour la modal , fonctionne comme celle du haut "genereworks"
 export let article;
-function genererworksmodal(works) {
+async function genererworksmodal(works) {
     for (let i = 0; i < works.length; i++) {
         article = works[i];
         const figureElement = document.createElement("figure");
