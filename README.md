@@ -1,5 +1,5 @@
-# Projet-3-OCR-COPIE (Projet numéro 3 formation développeur web Openclassroom) 
-Copie de l'ancien repository du Projet 3 
+# Projet-3-Sophie-Bluel_Designer-d'espace (Projet numéro 3 formation développeur web Openclassroom) 
+
 
 Language utilisé : HTML , CSS , JAVASCRIPT(vanilla)
 
