@@ -24,14 +24,16 @@ const closeModal = function (e) {
   modal.style.display = "none";
   modal.setAttribute("aria-hidden", "true");
   modal.removeAttribute("aria-modal");
-  modal = null;
   modal.removeEventListener("click", closeModal);
-  modal
-    .querySelector(".js-close-modal")
-    .removeEventListener("click", closeModal);
-  modal
-    .querySelector(".js-stop-modal")
-    .removeEventListener("click", stopPropagation);
+  const closeButton = modal.querySelector(".js-close-modal");
+  if (closeButton !== null) {
+    closeButton.removeEventListener("click", closeModal);
+  }
+  const stopButton = modal.querySelector(".js-stop-modal");
+  if (stopButton !== null) {
+    stopButton.removeEventListener("click", stopPropagation);
+  }
+  modal = null;
 };
 
 // Fonction pour empêcher la propagation du clic sur la modale
@@ -40,55 +42,55 @@ const stopPropagation = function (e) {
 };
 
 // Suppression de la galerie
-import { article, genererworks, genererworksmodal, getWorks } from "../index.js";
+import { genererworks, getWorks } from "../index.js";
 const deleteGallery = document.querySelector("#btn-modal2");
 const tokenDeleteGallery = sessionStorage.getItem("token");
 
 deleteGallery.addEventListener("click", async function (e) {
-  e.preventDefault();
+  e.preventDefault()
   // Afficher une boîte de dialogue de confirmation
   const confirmation = confirm(
     "Voulez-vous vraiment supprimer la gallery ?"
   );
 
   if (confirmation) {
-    // Récupère tous les projets(works) présents sur l'API
-    fetch("http://localhost:5678/api/works")
-      .then((response) => response.json())
-      .then((data) => {
-        const ids = data.map((item) => item.id);
-        console.log(ids);
-        // Supprime tous les éléments de la galerie en utilisant les IDs récupérés
-        data
-          .forEach((item) => {
-            fetch(`http://localhost:5678/api/works/${item.id}`, {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${tokenDeleteGallery}`,
-              },
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error(
-                    "Erreur lors de la suppression des éléments de la galerie"
-                  );
-                }
-                // Supprime les éléments de la galerie de la page HTML
-                const sectionGalleryPage = document.querySelector(".gallery");
-                sectionGalleryPage.innerHTML = "";
-                console.log(
-                  "Tous les éléments de la galerie ont été supprimés avec succès"
-                );
-              })
-              .catch((error) => {
-                console.error(error);
-              });
+    try {
+      // Récupère tous les projets(works) présents sur l'API
+      const response = await fetch("http://localhost:5678/api/works");
+      const data = await response.json();
+      const ids = data.map((item) => item.id);
+
+      // Supprime tous les éléments de la galerie en utilisant les IDs récupérés
+      await Promise.all(
+        data.map((item) =>
+          fetch(`http://localhost:5678/api/works/${item.id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tokenDeleteGallery}`,
+            },
+          }).then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                "Erreur lors de la suppression des éléments de la galerie"
+              );
+            }
           })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
+        )
+      );
+
+      // Supprime les éléments de la galerie de la page HTML
+      const sectionGalleryPage = document.querySelector(".gallery");
+      const sectionGalleryPageModal = document.querySelector("#gallery-modal");
+      sectionGalleryPage.innerHTML = "";
+      sectionGalleryPageModal.innerHTML = "";
+      console.log(
+        "Tous les éléments de la galerie ont été supprimés avec succès"
+      );
+
+    } catch (error) {
+      console.error(error);
+    }
   }
 });
 
@@ -210,33 +212,45 @@ function formulaireValide() {
 
 }
 
+// Fonction qui va reinitialiser le formulaire une fois qu'un projet est ajouté afin de permettre a l'user d'ajouter un nouveau projet si il le souhaite
+function reinitialiserFormulaire() {
+  document.getElementById("image-form").src = "";
+  document.querySelector(".imgI-style").style.display = "block";
+  document.getElementById("input-titre-style").value = "";
+  document.getElementById("select-categorie-style").value = "none";
+  document.getElementById("bouton-ajout").value = "";
+  document.querySelector('.style-bouton-ajout').style.display = "flex";
+
+  document.querySelector("#image-form").removeAttribute("alt");
+  document.querySelector("#image-form").style.display = "none";
+  document.querySelector("#span-imgI").style.display = "block";
+  document.querySelector("#span-imgI").classList.add("imgI-style");
+}
+
 // Ajout d'un évènnement 'change' pour tout les inputs afin de valider l'envois
 photo.addEventListener("change", formulaireValide);
 category.addEventListener("change", formulaireValide);
 titleWorks.addEventListener("change", formulaireValide);
 
 // Envoie de la requete à l'API si tout es correct
-divModalForm.addEventListener("submit", async (event) => {
-
+let image;
+submitBtn.addEventListener("click", async (event) => {
   event.preventDefault();
   event.stopPropagation();
 
-  const image = photo.files[0];
+  image = photo.files[0];
 
   const token = sessionStorage.getItem("token");
-
   const titre = titleWorks.value;
 
-  if (image.size < 4 * 1048576) {
+  if (image && image.size < 4 * 1048576) {
     const formData = new FormData();
     formData.append("image", image);
     formData.append("title", titre);
     formData.append("category", categorieId);
-    console.log("ceci est un test", formData);
-
 
     try {
-      const requete = await fetch("http://localhost:5678/api/works", {
+      const response = await fetch("http://localhost:5678/api/works", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -244,16 +258,15 @@ divModalForm.addEventListener("submit", async (event) => {
         },
         body: formData,
       });
+      const data = await response.json();
+      console.log(data);
       document.querySelector(".gallery").innerHTML = "";
-      document.querySelector("#gallery-modal").innerHTML = "";
       genererworks(await getWorks());
-      genererworksmodal(await getWorks());
     } catch (error) {
       console.trace(error)
       console.log(error + "un probleme est survenu");
-
     }
-
   }
-}
-);
+  event.returnValue = false;
+  reinitialiserFormulaire()
+});
