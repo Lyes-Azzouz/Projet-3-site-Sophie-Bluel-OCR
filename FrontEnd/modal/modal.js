@@ -42,7 +42,7 @@ const stopPropagation = function (e) {
 };
 
 // Suppression de la galerie
-import { genererworks, getWorks } from "../index.js";
+import { genererworks, getWorks, genererworksmodal } from "../index.js";
 const deleteGallery = document.querySelector("#btn-modal2");
 const tokenDeleteGallery = sessionStorage.getItem("token");
 
@@ -121,7 +121,7 @@ btnModal1.addEventListener("click", function () {
   const divForm = document.getElementById("divModalForm");
   divForm.style.display = "block";
 
-  // Attribution des numéro d'id pour chaque catégorie dans la select
+  // Attribution des numéro d'id pour chaque catégorie dans la select (j'aurais pu le faire en récupérant les données sur swagger mais j'ai préféré procéder de la sorte)
   const categories = {
     appart: 2,
     objets: 1,
@@ -204,6 +204,7 @@ function formulaireValide() {
   if (category.value !== "none" && titleWorks.value !== "" && photo.files.length > 0) {
     submitBtn.disabled = false;
     submitBtn.style.backgroundColor = "#1D6154";
+    submitBtn.style.cursor = "pointer";
   } else {
     submitBtn.disabled = true;
     submitBtn.style.backgroundColor = "";
@@ -223,8 +224,12 @@ function reinitialiserFormulaire() {
 
   document.querySelector("#image-form").removeAttribute("alt");
   document.querySelector("#image-form").style.display = "none";
-  document.querySelector("#span-imgI").style.display = "block";
-  document.querySelector("#span-imgI").classList.add("imgI-style");
+  submitBtn.disabled = true;
+  submitBtn.style.backgroundColor = "";
+  submitBtn.style.cursor = "default";
+
+
+
 }
 
 // Ajout d'un évènnement 'change' pour tout les inputs afin de valider l'envois
@@ -232,7 +237,7 @@ photo.addEventListener("change", formulaireValide);
 category.addEventListener("change", formulaireValide);
 titleWorks.addEventListener("change", formulaireValide);
 
-// Envoie de la requete à l'API si tout es correct
+// Envoie de la requete à l'API si tout est correct
 let image;
 submitBtn.addEventListener("click", async (event) => {
   event.preventDefault();
@@ -261,12 +266,17 @@ submitBtn.addEventListener("click", async (event) => {
       const data = await response.json();
       console.log(data);
       document.querySelector(".gallery").innerHTML = "";
+      document.querySelector("#gallery-modal").innerHTML = "";
       genererworks(await getWorks());
+      genererworksmodal(await getWorks());
     } catch (error) {
       console.trace(error)
       console.log(error + "un probleme est survenu");
     }
+  } else if (image && image.size > 4 * 1048576) {
+    alert("L'image est supérieure à 4 mo")
+    reinitialiserFormulaire()
   }
-  event.returnValue = false;
+  // Utilisation de la fonction "reinitialiserFormulaire" pour remettre à jour la modal
   reinitialiserFormulaire()
 });
