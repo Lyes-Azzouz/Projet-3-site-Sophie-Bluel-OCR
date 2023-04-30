@@ -1,3 +1,8 @@
+export let article;
+let idElement;
+
+
+
 // Récupération des projets (works) présents sur l'API
 async function getWorks() {
     const fetchWorks = await fetch("http://localhost:5678/api/works", {
@@ -31,7 +36,7 @@ async function genererworks(works) {
 }
 
 // Fonction avec une boucle  pour la modal , fonctionne comme celle du haut "genereworks"
-export let article;
+
 async function genererworksmodal(works) {
     for (let i = 0; i < works.length; i++) {
         article = works[i];
@@ -54,13 +59,11 @@ async function genererworksmodal(works) {
         trashIcon.setAttribute("data-index", i);
 
         // Ajout d'une constante "iconTrash" afin que le clique se fasse sur la balise <i> pour éviter les "problèmes de clique" due a l'élémment trashIcon (<a>) qui contient la balise (<i>)
+
         const iconTrash = trashIcon.querySelector(".trash");
         iconTrash.addEventListener("click", (event) => {
             event.preventDefault();
-            const idElement = trashIcon.getAttribute("data-id");
-
-            // Obtenir l'indice de l'élément à supprimer
-            const index = event.target.getAttribute("data-index");
+            idElement = trashIcon.getAttribute("data-id");
 
             // Afficher une boîte de dialogue de confirmation
             const confirmation = confirm(
@@ -75,7 +78,8 @@ async function genererworksmodal(works) {
                 })
                     .then((response) => {
                         if (response.ok) {
-                            supprimerElement(index);
+                            // Supprimer l'élément de la galerie
+                            supprimerElement(idElement);
                         }
                     })
                     .catch((error) => {
@@ -98,17 +102,11 @@ genererworksmodal(works)
 
 
 // Fonction pour supprimer les projets présents dans la gallery
-function supprimerElement(index) {
-    const sectionGallery = document.querySelector(".gallery");
-    const childNodes = sectionGallery.childNodes;
-
-    if (
-        index >= 0 &&
-        index < childNodes.length &&
-        childNodes[index] instanceof Node
-    ) {
-        sectionGallery.removeChild(childNodes[index]);
-    }
+async function supprimerElement(index) {
+    document.querySelector(".gallery").innerHTML = "";
+    document.querySelector("#gallery-modal").innerHTML = "";
+    genererworks(await getWorks());
+    genererworksmodal(await getWorks());
 }
 
 // Mise en place de la filterbar
