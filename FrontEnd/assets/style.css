@@ -460,6 +460,7 @@ footer nav ul {
   font-family: "Syne";
   font-size: 14px;
   border: 0;
+  cursor: pointer;
 }
 
 #btn-modal2 {
@@ -471,6 +472,7 @@ footer nav ul {
   font-family: "Syne";
   font-weight: 400;
   font-style: normal;
+  cursor: pointer;
 }
 
 #fermer {
@@ -523,6 +525,7 @@ footer nav ul {
   font-weight: 500;
   position: relative;
   left: 228px;
+  cursor: pointer;
 }
 
 #bouton-ajout {
