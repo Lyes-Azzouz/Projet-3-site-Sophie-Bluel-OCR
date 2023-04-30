@@ -23,3 +23,10 @@ Mot de passe : S0phie
 Lien pour voir la documentation Swagger :
 
 Pour lire la documentation, utilisez Chrome ou Firefox.
+
+
+--Attention-- {
+  
+  Le live server cause des problème de raffraichissement de la page , il est donc recommandé d'utilisé node server ou tout autre server web (ex : web server)
+
+}
