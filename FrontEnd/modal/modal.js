@@ -122,21 +122,9 @@ btnModal1.addEventListener("click", function () {
   divForm.style.display = "block";
 
   // Attribution des numéro d'id pour chaque catégorie dans la select (j'aurais pu le faire en récupérant les données sur swagger mais j'ai préféré procéder de la sorte)
-  const categories = {
-    appart: 2,
-    objets: 1,
-    hotelresto: 3,
-  };
 
-  // Paramètrage de la selection des catégories
-  selection = document.getElementById("select-categorie-style");
-  selection.addEventListener("change", function () {
-    const selectionIndex = selection.selectedIndex;
-    const selectionOption = selection.options[selectionIndex];
-    const selectionCategorie = selectionOption.value;
-    categorieId = categories[selectionCategorie];
-    console.log(categorieId);
-  });
+
+
 
   // Paramètrage de la flèche retour avec la balise <i> de fontawesome
   const flecheRetour = document.createElement("i");
@@ -163,10 +151,13 @@ const imgPreview = document.getElementById("image-form");
 const spanSousTitre = document.getElementById("sous-titre-btnmodal");
 const divModalForm = document.querySelector('#divModalForm');
 const photo = document.getElementById("bouton-ajout");
-const category = document.getElementById("select-categorie-style");
+
 const submitBtn = document.getElementById("btn-valider-style");
 const titleWorks = document.getElementById("input-titre-style")
 let fichierImage;
+
+
+
 
 
 // Mise en place de l'évènnement change au bouton Ajout
@@ -198,20 +189,82 @@ boutonAjoutInput.addEventListener("change", (e) => {
 
 ///////////////////Envoi des fichiers a API///////////////////
 
+let categorySelect = document.getElementById('select-categorie-style');
+let categoryId = "none";
+categorySelect.addEventListener('change', (e) => {
+  categoryId = e.target.value;
+  console.log(categorieId);
+})
+import { filtrerParCategorie } from "../index.js"
+export function remplirCategories() {
 
-// Fonction qui va valider le formulaire si tout les champs sont remplis 
-function formulaireValide() {
-  if (category.value !== "none" && titleWorks.value !== "" && photo.files.length > 0) {
+  const defaultOption = document.createElement('option');
+  defaultOption.value = "none";
+  defaultOption.text = "Sélectionnez une catégorie";
+  defaultOption.selected = true;
+  defaultOption.disabled = true;
+  categorySelect.appendChild(defaultOption);
+
+  const categorieIdForm = fetch('http://localhost:5678/api/categories')
+    .then(response => response.json())
+    .then(categories => {
+
+
+      // Ajouter les options de catégorie au menu déroulant
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.text = category.name;
+        categorySelect.appendChild(option);
+      });
+
+      // Mise en place de la filterbar
+      const filterBar = document.querySelector(".filterbar");
+      categories.forEach(category => {
+        const bouton = document.createElement('button');
+        bouton.textContent = category.name;
+        bouton.addEventListener('click', function () {
+          filtrerParCategorie(category.id);
+        });
+        filterBar.appendChild(bouton);
+      });
+    })
+    .catch(error => console.error(error));
+}
+remplirCategories()
+
+
+
+// Fonction test
+categorySelect.addEventListener('change', (e) => {
+  categoryId = e.target.value;
+  if (categoryId !== null) {
     submitBtn.disabled = false;
     submitBtn.style.backgroundColor = "#1D6154";
     submitBtn.style.cursor = "pointer";
   } else {
     submitBtn.disabled = true;
     submitBtn.style.backgroundColor = "";
+    submitBtn.style.cursor = "not-allowed";
   }
+});
 
+// Fonction qui va valider le formulaire si tout les champs sont remplis 
+function formulaireValide() {
+  if (titleWorks.value !== "" && photo.files.length > 0) {
+    submitBtn.disabled = false;
+    submitBtn.style.backgroundColor = "#1D6154";
+    submitBtn.style.cursor = "pointer";
+  } else {
+    submitBtn.disabled = true;
+    submitBtn.style.backgroundColor = "";
+    submitBtn.style.cursor = "not-allowed";
 
+  } if (titleWorks.value === "" && titleWorks === document.activeElement) {
+    alert("Attention , vous n'avez pas renseigné de titre.");
+  }
 }
+
 
 // Fonction qui va reinitialiser le formulaire une fois qu'un projet est ajouté afin de permettre a l'user d'ajouter un nouveau projet si il le souhaite
 function reinitialiserFormulaire() {
@@ -232,10 +285,14 @@ function reinitialiserFormulaire() {
 
 }
 
+
+
+
 // Ajout d'un évènnement 'change' pour tout les inputs afin de valider l'envois
-photo.addEventListener("change", formulaireValide);
-category.addEventListener("change", formulaireValide);
-titleWorks.addEventListener("change", formulaireValide);
+photo.addEventListener("input", formulaireValide);
+console.log(categorySelect);
+
+titleWorks.addEventListener("input", formulaireValide);
 
 // Envoie de la requete à l'API si tout est correct
 let image;
@@ -247,12 +304,13 @@ submitBtn.addEventListener("click", async (event) => {
 
   const token = sessionStorage.getItem("token");
   const titre = titleWorks.value;
+  const categorieIdForm = categorieId;
 
   if (image && image.size < 4 * 1048576) {
     const formData = new FormData();
     formData.append("image", image);
     formData.append("title", titre);
-    formData.append("category", categorieId);
+    formData.append("categoryId", categorieIdForm);
 
     try {
       const response = await fetch("http://localhost:5678/api/works", {
