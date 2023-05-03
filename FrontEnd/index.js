@@ -29,6 +29,7 @@ async function genererworks(works) {
         const nomElement = document.createElement("figcaption");
         nomElement.innerText = article.title;
         const sectionGallery = document.querySelector(".gallery");
+        figureElement.setAttribute("data-id", article.id);
         sectionGallery.appendChild(figureElement);
         figureElement.appendChild(imageElement);
         figureElement.appendChild(nomElement);
@@ -46,6 +47,7 @@ async function genererworksmodal(works) {
         const nomElement = document.createElement("figcaption");
         nomElement.innerText = "editer";
         const mouveArrow = document.createElement("a");
+        figureElement.setAttribute("data-id", article.id);
         mouveArrow.href = "#";
         mouveArrow.innerHTML =
             '<i class="fa-solid fa-arrows-up-down-left-right mouve"></i>';
@@ -80,6 +82,7 @@ async function genererworksmodal(works) {
                         if (response.ok) {
                             // Supprimer l'élément de la galerie
                             supprimerElement(idElement);
+
                         }
                     })
                     .catch((error) => {
@@ -102,56 +105,35 @@ genererworksmodal(works)
 
 
 // Fonction pour supprimer les projets présents dans la gallery
-async function supprimerElement(index) {
-    document.querySelector(".gallery").innerHTML = "";
-    document.querySelector("#gallery-modal").innerHTML = "";
-    genererworks(await getWorks());
-    genererworksmodal(await getWorks());
+async function supprimerElement(idElement) {
+    const elements = document.querySelectorAll("[data-id='" + idElement + "']");
+    elements.forEach((element) => {
+        element.remove();
+    });
+
+    // Supprimer l'élément de la galerie de la modal
+    const modalElements = document.querySelectorAll("#gallery-modal [data-id='" + idElement + "']");
+    modalElements.forEach((element) => {
+        element.remove();
+    });
 }
 
 // Mise en place de la filterbar
+import { remplirCategories } from "./modal/modal.js";
 const filterBar = document.querySelector(".filterbar");
-const boutonTous = document.querySelector(".tous");
-const boutonObjets = document.querySelector(".objets");
-const boutonAppart = document.querySelector(".appart");
-const boutonHotel = document.querySelector(".hotel");
-filterBar.appendChild(boutonTous);
-filterBar.appendChild(boutonObjets);
-filterBar.appendChild(boutonAppart);
-filterBar.appendChild(boutonHotel);
 
-boutonTous.addEventListener("click", function () {
-    const worksTous = works.filter(function (work) {
-        return work.categoryId;
+
+export function filtrerParCategorie(categoryId) {
+    const worksFiltres = works.filter(function (work) {
+        return work.categoryId === categoryId;
     });
-    console.log(worksTous);
+    console.log(worksFiltres);
     document.querySelector(".gallery").innerHTML = "";
-    genererworks(worksTous);
-});
-boutonObjets.addEventListener("click", function () {
-    const worksObjets = works.filter(function (work) {
-        return work.categoryId === 1;
-    });
-    console.log(worksObjets);
-    document.querySelector(".gallery").innerHTML = "";
-    genererworks(worksObjets);
-});
-boutonAppart.addEventListener("click", function () {
-    const worksAppart = works.filter(function (work) {
-        return work.categoryId === 2;
-    });
-    console.log(worksAppart);
-    document.querySelector(".gallery").innerHTML = "";
-    genererworks(worksAppart);
-});
-boutonHotel.addEventListener("click", function () {
-    const worksHotel = works.filter(function (work) {
-        return work.categoryId === 3;
-    });
-    console.log(worksHotel);
-    document.querySelector(".gallery").innerHTML = "";
-    genererworks(worksHotel);
-});
+    genererworks(worksFiltres);
+
+}
+
+
 
 // Supprimer ou afficher la filterbar si user est co ou non
 const userIsCo = sessionStorage.getItem("token") !== null;
