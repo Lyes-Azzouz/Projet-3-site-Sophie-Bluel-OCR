@@ -1,8 +1,20 @@
 const loginForm = document.getElementById("login-form");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
-const divErrorMsg = document.querySelector(".error-msg")
-console.log(divErrorMsg);
+const divErrorMsg = document.querySelector(".error-msg");
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -11,18 +23,16 @@ loginForm.addEventListener("submit", (event) => {
     if (emailInput.value === "" || passwordInput.value === "") {
         if (emailInput.value === "") {
             divErrorMsg.style.display = "block";
+
         }
         if (passwordInput.value === "") {
-            divErrorMsg.style.display = "block";
-        }
-        return;
-    }
 
-    // Vérification si l'e-mail et le mot de passe sont corrects  
-    if (emailInput.value !== "sophie.bluel@test.tld" || passwordInput.value !== "S0phie") {
-        emailInput.value = "";
-        passwordInput.value = "";
-        divErrorMsg.style.display = "block";
+            divErrorMsg.innerHTML = "Le champ mot de passe est vide ! ";
+            divErrorMsg.style.display = "block";
+            divErrorMsg.style.paddingLeft = "121px";
+            divErrorMsg.style.paddingTop = "15px";
+
+        }
         return;
     }
 
@@ -38,11 +48,27 @@ loginForm.addEventListener("submit", (event) => {
         },
         body: JSON.stringify(formData),
     })
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.status === 200) {
+                // Si la réponse du serveur indique que la connexion est réussie, rediriger l'utilisateur vers la page index.html
+                return response.json();
+            } else {
+                // Si la réponse du serveur indique une erreur, afficher le message d'erreur
+                divErrorMsg.innerHTML = "Identifiants  renseignés  inccorects !"
+                divErrorMsg.style.paddingLeft = "121px"
+            }
+        })
         .then((data) => {
+            // Stocker le token dans le session storage
             sessionStorage.setItem("token", data.token);
             window.location.replace("../index.html");
             document.querySelector(".filterbar").style.display = "block";
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+            emailInput.value = "";
+            passwordInput.value = "";
+            divErrorMsg.style.display = "block";
+            console.error(error);
+        });
 });
+
