@@ -167,7 +167,7 @@ boutonAjoutInput.addEventListener("change", (e) => {
 
 
 
-  console.log(fichierImage);
+
   const lecteurFichier = new FileReader();
   lecteurFichier.readAsDataURL(fichierImage);
   lecteurFichier.onload = () => {
@@ -182,72 +182,45 @@ boutonAjoutInput.addEventListener("change", (e) => {
     imgI.style.display = "none";
     spanSousTitre.style.color = "white";
     spanSousTitre.style.bottom = "25px";
-    console.log(lecteurFichier);
+
   };
 });
 
 
 ///////////////////Envoi des fichiers a API///////////////////
 
-let categorySelect = document.getElementById('select-categorie-style');
-let categoryId = "none";
-categorySelect.addEventListener('change', (e) => {
-  categoryId = e.target.value;
-  console.log(categorieId);
-})
-import { filtrerParCategorie } from "../index.js"
-export function remplirCategories() {
-
-  const defaultOption = document.createElement('option');
-  defaultOption.value = "none";
-  defaultOption.text = "Sélectionnez une catégorie";
-  defaultOption.selected = true;
-  defaultOption.disabled = true;
-  categorySelect.appendChild(defaultOption);
-
-  const categorieIdForm = fetch('http://localhost:5678/api/categories')
-    .then(response => response.json())
-    .then(categories => {
 
 
-      // Ajouter les options de catégorie au menu déroulant
-      categories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category.id;
-        option.text = category.name;
-        categorySelect.appendChild(option);
-      });
+import { getCategories } from "../index.js";
+let select;
+// Fonction pour remplir la liste déroulante des catégories avec les données de l'API
+async function remplirCategorySelect() {
+  const categories = await getCategories();
+  select = document.getElementById('select-categorie-style');
 
-      // Mise en place de la filterbar
-      const filterBar = document.querySelector(".filterbar");
-      categories.forEach(category => {
-        const bouton = document.createElement('button');
-        bouton.textContent = category.name;
-        bouton.addEventListener('click', function () {
-          filtrerParCategorie(category.id);
-        });
-        filterBar.appendChild(bouton);
-      });
-    })
-    .catch(error => console.error(error));
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category.id;
+    option.text = category.name;
+    select.appendChild(option);
+    console.log(option);
+  });
+
 }
-remplirCategories()
+remplirCategorySelect();
 
 
 
-// Fonction test
-categorySelect.addEventListener('change', (e) => {
-  categoryId = e.target.value;
-  if (categoryId !== null) {
-    submitBtn.disabled = false;
-    submitBtn.style.backgroundColor = "#1D6154";
-    submitBtn.style.cursor = "pointer";
-  } else {
-    submitBtn.disabled = true;
-    submitBtn.style.backgroundColor = "";
-    submitBtn.style.cursor = "not-allowed";
-  }
-});
+
+
+
+
+
+
+
+
+
+
 
 // Fonction qui va valider le formulaire si tout les champs sont remplis 
 function formulaireValide() {
@@ -271,18 +244,15 @@ function reinitialiserFormulaire() {
   document.getElementById("image-form").src = "";
   document.querySelector(".imgI-style").style.display = "block";
   document.getElementById("input-titre-style").value = "";
-  document.getElementById("select-categorie-style").value = "none";
+  document.getElementById("select-categorie-style").value = "";
   document.getElementById("bouton-ajout").value = "";
   document.querySelector('.style-bouton-ajout').style.display = "flex";
-
   document.querySelector("#image-form").removeAttribute("alt");
   document.querySelector("#image-form").style.display = "none";
   submitBtn.disabled = true;
   submitBtn.style.backgroundColor = "";
   submitBtn.style.cursor = "default";
-
-
-
+  select.selectedIndex = 0;
 }
 
 
@@ -290,51 +260,58 @@ function reinitialiserFormulaire() {
 
 // Ajout d'un évènnement 'change' pour tout les inputs afin de valider l'envois
 photo.addEventListener("input", formulaireValide);
-console.log(categorySelect);
-
 titleWorks.addEventListener("input", formulaireValide);
 
-// Envoie de la requete à l'API si tout est correct
-let image;
-submitBtn.addEventListener("click", async (event) => {
+
+// Envoie de la requête à l'API si tout est correct
+submitBtn.addEventListener('click', async (event) => {
   event.preventDefault();
   event.stopPropagation();
 
-  image = photo.files[0];
-
   const token = sessionStorage.getItem("token");
   const titre = titleWorks.value;
-  const categorieIdForm = categorieId;
+  const categorySelect = document.getElementById('select-categorie-style');
+  const categoryId = categorySelect.value;
+  console.log(categoryId);
 
-  if (image && image.size < 4 * 1048576) {
-    const formData = new FormData();
-    formData.append("image", image);
-    formData.append("title", titre);
-    formData.append("categoryId", categorieIdForm);
+  if (photo.files.length > 0) {
+    const image = photo.files[0];
+    if (image.size < 4 * 1048576) {
+      const formData = new FormData();
+      formData.append("image", image);
+      formData.append("title", titre);
+      formData.append("category", categoryId);
 
-    try {
-      const response = await fetch("http://localhost:5678/api/works", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          accept: "application/json",
-        },
-        body: formData,
-      });
-      const data = await response.json();
-      console.log(data);
-      document.querySelector(".gallery").innerHTML = "";
-      document.querySelector("#gallery-modal").innerHTML = "";
-      genererworks(await getWorks());
-      genererworksmodal(await getWorks());
-    } catch (error) {
-      console.trace(error)
-      console.log(error + "un probleme est survenu");
+
+      try {
+        const response = await fetch("http://localhost:5678/api/works", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            accept: "application/json",
+          },
+          body: formData,
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        document.querySelector(".gallery").innerHTML = "";
+        document.querySelector("#gallery-modal").innerHTML = "";
+        genererworks(await getWorks());
+        genererworksmodal(await getWorks());
+      } catch (error) {
+        console.trace(error)
+        console.log(error + "un probleme est survenu");
+      }
+    } else {
+      alert("L'image est supérieure à 4 mo")
+      reinitialiserFormulaire()
     }
-  } else if (image && image.size > 4 * 1048576) {
-    alert("L'image est supérieure à 4 mo")
-    reinitialiserFormulaire()
+  } else {
+    alert("Attention, vous n'avez pas sélectionné d'image.");
   }
+
   // Utilisation de la fonction "reinitialiserFormulaire" pour remettre à jour la modal
   reinitialiserFormulaire()
 });
