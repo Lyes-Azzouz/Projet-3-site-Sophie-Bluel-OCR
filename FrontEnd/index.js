@@ -111,28 +111,71 @@ async function supprimerElement(idElement) {
         element.remove();
     });
 
-    // Supprimer l'élément de la galerie de la modal
-    const modalElements = document.querySelectorAll("#gallery-modal [data-id='" + idElement + "']");
-    modalElements.forEach((element) => {
-        element.remove();
-    });
+
 }
 
 // Mise en place de la filterbar
-import { remplirCategories } from "./modal/modal.js";
 const filterBar = document.querySelector(".filterbar");
 
-
-export function filtrerParCategorie(categoryId) {
-    const worksFiltres = works.filter(function (work) {
-        return work.categoryId === categoryId;
-    });
-    console.log(worksFiltres);
-    document.querySelector(".gallery").innerHTML = "";
-    genererworks(worksFiltres);
-
+async function filtrerParCategorie(categoryId) {
+    try {
+        const worksFiltres = works.filter(function (work) {
+            return work.categoryId === categoryId;
+        });
+        document.querySelector(".gallery").innerHTML = "";
+        genererworks(worksFiltres);
+    } catch (error) {
+        console.error('Une erreur c\'est produite : ', error)
+    }
 }
 
+
+
+// Fonction pour générer les boutons de filtre
+async function genererBoutonsFiltre() {
+    try {
+        // Récupérer toutes les catégories depuis l'API
+        const categories = await getCategories();
+
+        // Générer un bouton pour chaque catégorie
+        categories.forEach(function (category) {
+            // Créer un bouton
+            const bouton = document.createElement("button");
+            bouton.innerText = category.name;
+            bouton.setAttribute("data-category-id", category.id);
+
+            // Ajouter un écouteur d'événement pour filtrer par catégorie lorsqu'un bouton est cliqué
+            bouton.addEventListener("click", function () {
+                const categoryId = parseInt(bouton.getAttribute("data-category-id"));
+                console.log("Clicked category ID:", categoryId);
+                filtrerParCategorie(categoryId);
+            });
+
+            // Ajouter le bouton à la filterbar
+            filterBar.appendChild(bouton);
+        });
+    } catch (error) {
+        console.error('Une erreur s\'est produite :', error);
+    }
+}
+
+// Appeler la fonction pour générer les boutons de filtre
+genererBoutonsFiltre();
+
+
+
+// Fonction pour récuperer les catégorie sur l'API
+export async function getCategories() {
+    try {
+        const response = await fetch('http://localhost:5678/api/categories');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Une erreur s\'est produite :', error);
+    }
+}
+
+console.log(getCategories());
 
 
 // Supprimer ou afficher la filterbar si user est co ou non
