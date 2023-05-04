@@ -116,7 +116,16 @@ async function supprimerElement(idElement) {
 
 // Mise en place de la filterbar
 const filterBar = document.querySelector(".filterbar");
+const tousBouton = document.createElement("button");
+tousBouton.innerText = "Tous";
+tousBouton.classList.add("tous");
+filterBar.prepend(tousBouton);
 
+const tous = document.querySelector(".tous");
+tous.addEventListener("click", function () {
+    document.querySelector(".gallery").innerHTML = "";
+    genererworks(works);
+});
 async function filtrerParCategorie(categoryId) {
     try {
         const worksFiltres = works.filter(function (work) {
