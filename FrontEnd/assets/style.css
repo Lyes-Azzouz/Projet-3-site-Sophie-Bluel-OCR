@@ -313,7 +313,7 @@ footer nav ul {
 /** Création du style d'éléments enfants aux header **/
 
 .filterbar {
-  margin: 110px 0 51px 250px;
+  margin: 110px 0 51px 188px;
   min-width: 700px;
   position: relative;
 }
